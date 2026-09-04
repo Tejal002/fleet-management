@@ -1,0 +1,321 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+}
+
+.app {
+  max-width: 1400px;
+  margin: auto;
+  padding: 24px;
+}
+
+/* Header */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.header p {
+  margin: 5px 0 0;
+  color: #6b7280;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.connected {
+  background: #22c55e;
+}
+
+.disconnected {
+  background: #ef4444;
+}
+
+
+/* Summary */
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.card span {
+  color: #6b7280;
+}
+
+.card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 28px;
+}
+
+
+/* Sections */
+
+.map-section,
+.robots-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  margin: 0;
+}
+
+.section-header p {
+  margin: 4px 0;
+  color: #6b7280;
+}
+
+
+/* Map */
+
+.map {
+  position: relative;
+  height: 550px;
+  background:
+    linear-gradient(#e5e7eb 1px, transparent 1px),
+    linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+  background-size: 50px 50px;
+  border: 2px solid #d1d5db;
+  overflow: hidden;
+}
+
+.robot {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition:
+    left 0.8s linear,
+    top 0.8s linear;
+  cursor: pointer;
+}
+
+.robot-label {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+/* Robot status */
+
+.robot-idle {
+  background: #6b7280;
+}
+
+.robot-active {
+  background: #22c55e;
+}
+
+.robot-on_mission {
+  background: #3b82f6;
+}
+
+.robot-charging {
+  background: #eab308;
+}
+
+.robot-blocked {
+  background: #f97316;
+}
+
+.robot-error {
+  background: #ef4444;
+}
+
+.robot-maintenance {
+  background: #8b5cf6;
+}
+
+.robot-offline {
+  background: #111827;
+}
+
+
+/* Search */
+
+input {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+
+/* Filters */
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filters button {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  background: #f3f4f6;
+}
+
+.filters .active-filter {
+  background: #111827;
+  color: white;
+}
+
+
+/* Table */
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+
+/* Badges */
+
+.badge {
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.idle {
+  background: #f3f4f6;
+}
+
+.badge.active {
+  background: #dcfce7;
+}
+
+.badge.on_mission {
+  background: #dbeafe;
+}
+
+.badge.charging {
+  background: #fef3c7;
+}
+
+.badge.blocked {
+  background: #ffedd5;
+}
+
+.badge.error {
+  background: #fee2e2;
+}
+
+.badge.maintenance {
+  background: #ede9fe;
+}
+
+.badge.offline {
+  background: #e5e7eb;
+}
+
+
+/* Battery */
+
+.battery {
+  display: inline-block;
+  width: 70px;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-right: 8px;
+}
+
+.battery-bar {
+  height: 100%;
+  background: #22c55e;
+}
+
+
+/* Responsive */
+
+@media (max-width: 800px) {
+
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .header {
+    align-items: flex-start;
+    gap: 15px;
+    flex-direction: column;
+  }
+
+  .map {
+    height: 400px;
+  }
+}
