@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
-const WS_URL = "ws://localhost:5000";
+const WS_URL  = import.meta.env.VITE_WS_URL;
 
 function App() {
   const [robots, setRobots] = useState([]);
