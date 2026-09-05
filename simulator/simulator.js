@@ -1,39 +1,35 @@
 require("dotenv").config();
 
 const WebSocket = require("ws");
+
+// Configuration
 const FLEET_SIZE = Number(process.env.FLEET_SIZE || 10);
 const UPDATE_INTERVAL = Number(process.env.UPDATE_INTERVAL || 1000);
 const SITE_WIDTH = Number(process.env.SITE_WIDTH || 1000);
 const SITE_HEIGHT = Number(process.env.SITE_HEIGHT || 600);
 
-const ws = new WebSocket(process.env.BACKEND_WS_URL);
-
-
-ws.on("open", () => {
-  console.log("Connected to backend");
-});
-
-ws.on("error", (error) => {
-  console.error("WebSocket error:", error.message);
-});
-
-ws.on("close", () => {
-  console.log("Disconnected from backend");
-});
-
-
+const BACKEND_WS_URL = process.env.BACKEND_WS_URL;
 
 const robots = [];
-
 const startTime = Date.now();
 
-// Create robots
+let ws = null;
+let reconnectTimer = null;
+
+
+// -----------------------------
+// Create Robots
+// -----------------------------
+
 for (let i = 1; i <= FLEET_SIZE; i++) {
   robots.push({
     robot_id: `r${i}`,
+
     x: Math.random() * SITE_WIDTH,
     y: Math.random() * SITE_HEIGHT,
+
     battery: 50 + Math.random() * 50,
+
     status: "idle",
 
     dx: (Math.random() - 0.5) * 4,
@@ -41,7 +37,44 @@ for (let i = 1; i <= FLEET_SIZE; i++) {
   });
 }
 
-// Update battery
+
+// -----------------------------
+// WebSocket Connection
+// -----------------------------
+
+function connectWebSocket() {
+  console.log("Connecting to backend...");
+
+  ws = new WebSocket(BACKEND_WS_URL);
+
+  ws.on("open", () => {
+    console.log("Connected to backend");
+  });
+
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error.message);
+  });
+
+  ws.on("close", () => {
+    console.log("Disconnected from backend");
+
+    // Try reconnecting after 2 seconds
+    if (!reconnectTimer) {
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connectWebSocket();
+      }, 2000);
+    }
+  });
+}
+
+connectWebSocket();
+
+
+// -----------------------------
+// Update Battery
+// -----------------------------
+
 function updateBattery(robot) {
   if (robot.status === "charging") {
     robot.battery += 0.5;
@@ -59,7 +92,11 @@ function updateBattery(robot) {
   );
 }
 
-// Update status
+
+// -----------------------------
+// Update Status
+// -----------------------------
+
 function updateStatus(robot) {
   if (robot.status === "charging") {
     if (robot.battery >= 90) {
@@ -91,7 +128,11 @@ function updateStatus(robot) {
   }
 }
 
-// Update position
+
+// -----------------------------
+// Update Position
+// -----------------------------
+
 function updatePosition(robot) {
   robot.x += robot.dx;
   robot.y += robot.dy;
@@ -115,13 +156,21 @@ function updatePosition(robot) {
   );
 }
 
-// Simulation loop
+
+// -----------------------------
+// Simulation Loop
+// -----------------------------
+
 setInterval(() => {
+
   const t = Math.floor(
     (Date.now() - startTime) / 1000
   );
 
+  let sentCount = 0;
+
   robots.forEach((robot) => {
+
     updateStatus(robot);
     updateBattery(robot);
     updatePosition(robot);
@@ -135,12 +184,14 @@ setInterval(() => {
       battery: Number(robot.battery.toFixed(1)),
     };
 
-    console.log(payload);
-
-    if (ws.readyState === WebSocket.OPEN) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(payload));
+      sentCount++;
     }
   });
 
-  console.log();
+  console.log(
+    `t=${t}s | robots=${FLEET_SIZE} | sent=${sentCount}/${FLEET_SIZE}`
+  );
+
 }, UPDATE_INTERVAL);
